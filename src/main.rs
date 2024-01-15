@@ -5,6 +5,7 @@ mod torrent_stats;
 mod transmission;
 mod ui;
 mod utils;
+mod add_torrent_dialog;
 
 use binary_heap_plus::BinaryHeap;
 use command_processor::{TorrentCmd, TorrentUpdate};
@@ -25,7 +26,7 @@ use tui::{
 };
 use tui_tree_widget::{flatten, get_identifier_without_leaf, TreeItem, TreeState};
 use utils::{build_file_tree, build_file_tree_index, find_file_position, process_folder, FileIdx};
-use crate::ui::TorrentDialogState;
+use crate::add_torrent_dialog::TorrentDialogState;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Filter {
