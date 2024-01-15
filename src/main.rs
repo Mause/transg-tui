@@ -1,3 +1,4 @@
+mod add_torrent_dialog;
 mod command_processor;
 mod config;
 mod icons;
@@ -5,8 +6,8 @@ mod torrent_stats;
 mod transmission;
 mod ui;
 mod utils;
-mod add_torrent_dialog;
 
+use crate::add_torrent_dialog::TorrentDialogState;
 use binary_heap_plus::BinaryHeap;
 use command_processor::{TorrentCmd, TorrentUpdate};
 use config::{Config, TrafficMonitorOptions, Styles, compute_styles};
@@ -26,7 +27,6 @@ use tui::{
 };
 use tui_tree_widget::{flatten, get_identifier_without_leaf, TreeItem, TreeState};
 use utils::{build_file_tree, build_file_tree_index, find_file_position, process_folder, FileIdx};
-use crate::add_torrent_dialog::TorrentDialogState;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Filter {
@@ -858,7 +858,9 @@ fn run_app<B: Backend>(
                                 app.add_torrent_state.next();
                             }
                             KeyCode::Char(a) => app.add_torrent_state.input().push(a),
-                            KeyCode::Backspace => {app.add_torrent_state.input().pop();},
+                            KeyCode::Backspace => {
+                                app.add_torrent_state.input().pop();
+                            }
                             _ => {}
                         },
                     }

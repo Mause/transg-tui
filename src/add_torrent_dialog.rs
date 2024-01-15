@@ -1,14 +1,10 @@
 use tui::{
-    layout::{Rect},
+    layout::Rect,
     text::{Span, Spans},
-    widgets::{
-        Block, Borders, Clear, Paragraph,
-        StatefulWidget, Widget,
-    },
+    widgets::{Block, Borders, Clear, Paragraph, StatefulWidget, Widget},
 };
 
 use crate::{config::Styles, TorrentCmd};
-
 
 enum TorrentDialogField {
     Url,
@@ -28,7 +24,7 @@ impl TorrentDialogState {
             url: "".to_string(),
         }
     }
-    pub (crate) fn input(&mut self) -> &mut String {
+    pub(crate) fn input(&mut self) -> &mut String {
         match self.selected_field {
             TorrentDialogField::Url => &mut self.url,
             TorrentDialogField::Path => &mut self.path,
@@ -42,16 +38,11 @@ impl TorrentDialogState {
     }
     pub(crate) fn command(&self) -> TorrentCmd {
         // download dir, filename, metainfo, start_paused
-        TorrentCmd::AddTorrent(
-            Some(self.path.clone()),
-            Some(self.url.clone()),
-            None,
-            true
-        )
+        TorrentCmd::AddTorrent(Some(self.path.clone()), Some(self.url.clone()), None, true)
     }
 }
 pub(crate) struct TorrentDialog<'a> {
-    styles: &'a Styles
+    styles: &'a Styles,
 }
 impl<'a> TorrentDialog<'a> {
     pub(crate) fn new(styles: &'a Styles) -> Self {
@@ -65,18 +56,23 @@ impl<'a> StatefulWidget for TorrentDialog<'a> {
         let styles = &self.styles;
         let lines = vec![
             Spans::from(vec![Span::raw("")]),
-            Spans::from(vec![Span::styled(" Add torrent: ", styles.text), Span::raw(state.path.to_string())]),
+            Spans::from(vec![
+                Span::styled(" Add torrent: ", styles.text),
+                Span::raw(state.path.to_string()),
+            ]),
             Spans::from(vec![Span::raw("")]),
-            Spans::from(vec![Span::styled(" Enter torrent URL or path: ", styles.text), Span::raw(state.url.to_string())]),
+            Spans::from(vec![
+                Span::styled(" Enter torrent URL or path: ", styles.text),
+                Span::raw(state.url.to_string()),
+            ]),
         ];
         let message = Paragraph::new(lines).block(
             Block::default()
-            .title("Add Torrent")
-            .borders(Borders::ALL)
-            .border_style(styles.text),
+                .title("Add Torrent")
+                .borders(Borders::ALL)
+                .border_style(styles.text),
         );
         Clear {}.render(area, buf);
         message.render(area, buf);
     }
 }
-

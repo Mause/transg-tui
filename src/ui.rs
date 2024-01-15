@@ -18,7 +18,7 @@ use crate::utils::{
 };
 use tui_tree_widget::{Tree, TreeItem};
 
-use crate::{App, Transition, add_torrent_dialog::TorrentDialog};
+use crate::{add_torrent_dialog::TorrentDialog, App, Transition};
 
 pub fn ui<B: Backend>(frame: &mut Frame<B>, app: &mut App) {
     let size = frame.size();
