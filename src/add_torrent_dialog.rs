@@ -16,14 +16,16 @@ pub(crate) struct TorrentDialogState {
     path: String,
     url: String,
 }
-impl TorrentDialogState {
-    pub(crate) fn new() -> Self {
+impl Default for TorrentDialogState {
+    fn default() -> Self {
         Self {
             selected_field: TorrentDialogField::Path,
             path: "".to_string(),
             url: "".to_string(),
         }
     }
+}
+impl TorrentDialogState {
     pub(crate) fn input(&mut self) -> &mut String {
         match self.selected_field {
             TorrentDialogField::Url => &mut self.url,

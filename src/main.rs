@@ -171,7 +171,7 @@ impl App<'_> {
         let stats: SessionStats = SessionStats::empty();
         let groups: TorrentGroupStats = TorrentGroupStats::empty();
         let styles: Styles = compute_styles(&config);
-        let add_torrent_state = TorrentDialogState::new();
+        let add_torrent_state = TorrentDialogState::default();
 
         App {
             transition: Transition::MainScreen,
