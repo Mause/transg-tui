@@ -18,7 +18,7 @@ use crate::utils::{
 };
 use tui_tree_widget::{Tree, TreeItem};
 
-use crate::{App, Transition};
+use crate::{add_torrent_dialog::TorrentDialog, App, Transition};
 
 pub fn ui<B: Backend>(frame: &mut Frame<B>, app: &mut App) {
     let size = frame.size();
@@ -272,6 +272,10 @@ pub fn ui<B: Backend>(frame: &mut Frame<B>, app: &mut App) {
             let block = choose_connection(&app.config, &app.styles);
             frame.render_widget(Clear, area);
             frame.render_widget(block, area);
+        }
+        Transition::AddTorrentDialog => {
+            let area = centered_rect(26, 35, size);
+            frame.render_stateful_widget(TorrentDialog::new(&app.styles), area, &mut app.add_torrent_state);
         }
         _ => {}
     }

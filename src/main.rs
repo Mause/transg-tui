@@ -1,3 +1,4 @@
+mod add_torrent_dialog;
 mod command_processor;
 mod config;
 mod icons;
@@ -6,6 +7,7 @@ mod transmission;
 mod ui;
 mod utils;
 
+use crate::add_torrent_dialog::TorrentDialogState;
 use binary_heap_plus::BinaryHeap;
 use command_processor::{TorrentCmd, TorrentUpdate};
 use config::{Config, TrafficMonitorOptions, Styles, compute_styles};
@@ -51,6 +53,7 @@ pub enum Transition {
     ChooseSortFunc,
     Connection,
     FileAction,
+    AddTorrentDialog,
 }
 
 impl Transition {
@@ -111,6 +114,7 @@ pub struct App<'a> {
     pub prev_transition: Transition,
     pub left_filter_state: ListState,
     pub main_table_state: TableState,
+    pub(crate) add_torrent_state: TorrentDialogState,
     pub torrents: HashMap<i64, TorrentInfo>,
     pub filtered_torrents: Vec<TorrentInfo>,
     pub free_space: u64,
@@ -167,6 +171,7 @@ impl App<'_> {
         let stats: SessionStats = SessionStats::empty();
         let groups: TorrentGroupStats = TorrentGroupStats::empty();
         let styles: Styles = compute_styles(&config);
+        let add_torrent_state = TorrentDialogState::default();
 
         App {
             transition: Transition::MainScreen,
@@ -174,6 +179,7 @@ impl App<'_> {
             left_filter_state,
             main_table_state,
             torrents,
+            add_torrent_state,
             filtered_torrents,
             free_space,
             stats,
@@ -220,13 +226,13 @@ fn run_app<B: Backend>(
                 }
             }
             Some(TorrentUpdate::Input(event)) => match event.code {
-                KeyCode::Char('q') => {
-                    //let _ = sender.blocking_send(TorrentCmd::PoisonPill);
-                    break Ok(());
-                }
                 _ => {
                     match app.transition {
                         Transition::MainScreen => match event.code {
+                            KeyCode::Char('q') => {
+                                //let _ = sender.blocking_send(TorrentCmd::PoisonPill);
+                                break Ok(());
+                            }
                             KeyCode::Char(' ') => {
                                 if app.selected.is_some() {
                                     app.transition = Transition::Action;
@@ -310,6 +316,9 @@ fn run_app<B: Backend>(
                             }
                             KeyCode::Char('S') => {
                                 app.transition = Transition::ChooseSortFunc;
+                            }
+                            KeyCode::Char('a') => {
+                                app.transition = Transition::AddTorrentDialog;
                             }
                             KeyCode::Esc => {
                                 if let Filter::Search(_) = app.current_filter {
@@ -833,6 +842,25 @@ fn run_app<B: Backend>(
                             KeyCode::Char('l') => { /*torrent id, file idx, l/m/h, files-wanted, files-unwanted*/ }
                             KeyCode::Char('m') => {}
                             KeyCode::Char('h') => {}*/
+                            _ => {}
+                        },
+                        Transition::AddTorrentDialog => match event.code {
+                            KeyCode::Esc => {
+                                app.transition = Transition::MainScreen;
+                            }
+                            KeyCode::Enter => {
+                                sender
+                                    .blocking_send(app.add_torrent_state.command())
+                                    .expect("should send");
+                                app.transition = Transition::MainScreen;
+                            }
+                            KeyCode::Tab => {
+                                app.add_torrent_state.next();
+                            }
+                            KeyCode::Char(a) => app.add_torrent_state.input().push(a),
+                            KeyCode::Backspace => {
+                                app.add_torrent_state.input().pop();
+                            }
                             _ => {}
                         },
                     }

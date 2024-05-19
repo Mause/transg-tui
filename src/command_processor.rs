@@ -248,7 +248,10 @@ async fn update_step(
         }
         TorrentCmd::GetDetails(id) => {
             *details_id = Some(id);
-            let details = client.get_torrent_details(vec![id]).await?; // TODO: what if id is wrong?
+            let details = client
+                .get_torrent_details(vec![id])
+                .await
+                .expect("// TODO: what if id is wrong?");
             if !details.arguments.torrents.is_empty() {
                 update_sender
                     .send(TorrentUpdate::Details(Box::new(
